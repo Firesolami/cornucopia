@@ -43,9 +43,10 @@ app.listen(3000, () => {
     console.log('App listening on port 3000');
 });
 
-app.use(function(err, req, res, next) {
-    return res.status(err.status || 500).json({
+app.use((err, req, res, next) => {
+    res.status = process.env.NODE_ENV === "production" ? 500 : err.status;
+    return res.json({
         status: "error",
-        message: err.message
+        message: process.env.NODE_ENV === "production" ? "Internal server error" : err.message
     });
 });

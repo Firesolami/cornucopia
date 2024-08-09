@@ -200,7 +200,7 @@ exports.upload_photo = [passport.authenticate('jwt', { session: false }), upload
 })];
 
 exports.update_photo = [passport.authenticate('jwt', { session: false }), asyncHandler(async (req, res, next) => {
-    if (req.body.photoName && req.body.id) {
+    if (req.body.photoName) {
         const duplicate = await File.findOne({ name: req.body.photoName, user: req.user._id });
         if (duplicate) {
             return res.status(400).json({
@@ -208,7 +208,7 @@ exports.update_photo = [passport.authenticate('jwt', { session: false }), asyncH
                 message: "Name already in use."
             })
         }
-        await File.findByIdAndUpdate(req.body.id, { $set : { name: req.body.photoName } });
+        await File.findByIdAndUpdate(req.params.id, { $set : { name: req.body.photoName } });
         return res.status(200).json({
             status: "success",
             message: "Photo updated successfully."
@@ -216,7 +216,7 @@ exports.update_photo = [passport.authenticate('jwt', { session: false }), asyncH
     } else {
         return res.status(400).json({
             status: "error",
-            message: "Photo name and id required."
+            message: "Photo name required."
         });
     }
 })];
@@ -248,7 +248,7 @@ exports.folder_detail = [passport.authenticate('jwt', { session: false }), async
 })];
 
 exports.update_folder = [passport.authenticate('jwt', { session: false }), asyncHandler(async (req, res, next) => {
-    if (req.body.folderName && req.body.id) {
+    if (req.body.folderName) {
         const duplicate = await Folder.findOne({ name: req.body.folderName, user: req.user._id });
         if (duplicate) {
             return res.status(400).json({
@@ -256,7 +256,7 @@ exports.update_folder = [passport.authenticate('jwt', { session: false }), async
                 message: "Name already in use."
             })
         }
-        await Folder.findByIdAndUpdate(req.body.id, { $set : { name: req.body.folderName } });
+        await Folder.findByIdAndUpdate(req.params.id, { $set : { name: req.body.folderName } });
         return res.status(200).json({
             status: "success",
             message: "Folder updated successfully."
@@ -264,7 +264,7 @@ exports.update_folder = [passport.authenticate('jwt', { session: false }), async
     } else {
         return res.status(400).json({
             status: "error",
-            message: "Folder name and id required."
+            message: "Folder name required."
         });
     }
 })];
@@ -311,20 +311,21 @@ exports.create_folder = [passport.authenticate('jwt', { session: false }), async
 })];
 
 exports.upload_to_folder = [passport.authenticate('jwt', { session: false }), upload.single('file'), asyncHandler(async (req, res, next) => {
-    if (!req.body.folder_id || !req.body.folderName) {
+    const confirmFolder = await Folder.findOne({ _id: req.params.id, user: req.user._id });
+    if (!confirmFolder) {
         if (req.file) {
             await cloudinary.uploader.destroy(req.file.filename);
         }
         return res.status(400).json({
             status: "error",
-            message: "Folder ID and Folder name required"
+            message: "Invalid folder ID."
         });
     }
 
     const duplicate = await File.findOne({
         name: req.file.originalname,
         user: req.user._id,
-        folder: req.body.folder_id
+        folder: req.params.id
     });
 
     if (duplicate) {
@@ -345,15 +346,15 @@ exports.upload_to_folder = [passport.authenticate('jwt', { session: false }), up
             imageUrl: req.file.path,
             publicId: req.file.filename,
             user: req.user._id,
-            folder: req.body.folder_id,
+            folder: req.params.id,
         });
 
         await photo.save();
 
-        const folder = await Folder.findOne({ _id: req.body.folder_id }).select("size");
+        const folder = await Folder.findOne({ _id: req.params.id }).select("size");
         const newSize = folder.size + req.file.size;
 
-        await Folder.findByIdAndUpdate(req.body.folder_id, {
+        await Folder.findByIdAndUpdate(req.params.id, {
             $push: { publicId: req.file.filename },
             $set: { size: newSize }
         });
@@ -363,7 +364,7 @@ exports.upload_to_folder = [passport.authenticate('jwt', { session: false }), up
         return res.status(201).json({
             status: "success",
             photo: selectedPhoto,
-            message: `Photo uploaded to ${req.body.folderName} successfully.`
+            message: `Photo uploaded successfully.`
         });
     } else {
         return res.status(400).json({
