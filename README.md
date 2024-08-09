@@ -49,6 +49,7 @@ JWT_SECRET=your_jwt_secret
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+NODE_ENV=development
 ```
 
 Replace the placeholder values with your actual credentials.
@@ -69,32 +70,33 @@ The API documentation is available in the `api_documentation.md` file located in
 
 ### Endpoints Overview
 
-Here's a brief overview of the available endpoints:
+- **User Endpoints**
+  - `POST /signup`: Create a new user account.
+  - `POST /signin`: Sign in a user.
+  - `GET /user-info`: Retrieve information about the authenticated user.
 
-- **User Routes**
-  - `POST /api/signup`: Register a new user
-  - `POST /api/signin`: User login
+- **Photo Endpoints**
+  - `GET /home`: Retrieve the latest 8 photos of the user.
+  - `GET /storage`: Retrieve all photos of the user.
+  - `GET /storage/:id`: Retrieve details of a specific photo.
+  - `POST /storage`: Upload a new photo.
+  - `PATCH /storage/:id`: Update the name of a photo.
+  - `DELETE /storage/:id`: Delete a specific photo.
 
-- **File Routes**
-  - `POST /api/upload-photo`: Upload a new photo
-  - `GET /api/storage`: Get all user photos
-  - `GET /api/storage/{id}`: Get details of a specific photo
-  - `PATCH /api/update-photo`: Update photo details
-  - `DELETE /api/storage/{id}/delete`: Delete a photo
+- **Folder Endpoints**
+  - `GET /folders`: Retrieve all folders of the user.
+  - `GET /folders/:id`: Retrieve details of a specific folder.
+  - `POST /folders`: Create a new folder.
+  - `PATCH /folders/:id`: Update the name of a folder.
+  - `DELETE /folders/:id`: Delete a specific folder.
+  - `POST /folders/:id`: Upload a photo to a specific folder.
+  - `GET /folder-names`: Retrieve names of all folders of the user.
 
-- **Folder Routes**
-  - `GET /api/folders`: Get all user folders
-  - `GET /api/folders/{id}`: Get details of a specific folder
-  - `POST /api/create-folder`: Create a new folder
-  - `PATCH /api/update-folder`: Update folder details
-  - `DELETE /api/folders/{id}/delete`: Delete a folder
-  - `POST /api/upload-to-folder`: Upload a photo to a specific folder
-
-- **Sharing Routes**
-  - `POST /api/generate-share-url`: Generate a shareable URL for a folder
-  - `GET /api/share/{shareId}`: Get details of a shared folder
-  - `GET /api/share/{shareId}/storage/{id}`: Get details of a shared photo
-
+- **Share Endpoints**
+  - `POST /generate-share-url`: Generate a shareable URL for a folder.
+  - `GET /share/:shareId`: Retrieve details of a shared folder.
+  - `GET /share/:shareId/storage/:id`: Retrieve a specific photo from a shared folder.
+    
 ### Contributing
 
 Contributions are welcome! Please fork the repository and submit a pull request with your changes.
