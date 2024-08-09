@@ -57,7 +57,7 @@
     - `200 OK`: Photo details retrieved successfully.
     - `404 Not Found`: Photo not found.
 
-- **POST /upload-photo**
+- **POST /storage**
   - **Description**: Upload a new photo.
   - **Request Body**:
     - `file`: (file) Photo file.
@@ -65,16 +65,17 @@
     - `201 Created`: Photo uploaded successfully.
     - `400 Bad Request`: No photo selected or duplicate name.
 
-- **PATCH /update-photo**
+- **PATCH /storage/:id**
   - **Description**: Update the name of a photo.
+  - **Parameters**:
+    - `id`: (string) Photo ID.
   - **Request Body**:
     - `photoName`: (string) New photo name.
-    - `id`: (string) Photo ID.
   - **Responses**:
     - `200 OK`: Photo updated successfully.
-    - `400 Bad Request`: Photo name or ID missing.
+    - `400 Bad Request`: Photo name missing.
 
-- **DELETE /storage/:id/delete**
+- **DELETE /storage/:id**
   - **Description**: Delete a specific photo.
   - **Parameters**:
     - `id`: (string) Photo ID.
@@ -98,7 +99,7 @@
     - `200 OK`: Folder and photos retrieved successfully.
     - `404 Not Found`: Folder not found.
 
-- **POST /create-folder**
+- **POST /folders**
   - **Description**: Create a new folder.
   - **Request Body**:
     - `folderName`: (string) Name of the new folder.
@@ -106,16 +107,17 @@
     - `201 Created`: Folder created successfully.
     - `400 Bad Request`: Folder name already in use.
 
-- **PATCH /update-folder**
+- **PATCH /folders/:id**
   - **Description**: Update the name of a folder.
+  - **Parameters**:
+    - `id`: (string) Folder ID.
   - **Request Body**:
     - `folderName`: (string) New folder name.
-    - `id`: (string) Folder ID.
   - **Responses**:
     - `200 OK`: Folder updated successfully.
-    - `400 Bad Request`: Folder name or ID missing.
+    - `400 Bad Request`: Folder name missing.
 
-- **DELETE /folders/:id/delete**
+- **DELETE /folders/:id**
   - **Description**: Delete a specific folder and all its photos.
   - **Parameters**:
     - `id`: (string) Folder ID.
@@ -123,15 +125,15 @@
     - `200 OK`: Folder deleted successfully.
     - `404 Not Found`: Folder not found.
 
-- **POST /upload-to-folder**
+- **POST /folders/:id**
   - **Description**: Upload a photo to a specific folder.
+  - **Parameters**:
+    - `id`: (string) Folder ID.
   - **Request Body**:
-    - `folder_id`: (string) Folder ID.
-    - `folderName`: (string) Folder name.
     - `file`: (file) Photo file.
   - **Responses**:
     - `201 Created`: Photo uploaded to the folder successfully.
-    - `400 Bad Request`: Folder ID or name missing, or duplicate photo name.
+    - `400 Bad Request`: Duplicate photo name.
 
 - **GET /folder-names**
   - **Description**: Retrieve names of all folders of the user.
@@ -144,8 +146,9 @@
 - **POST /generate-share-url**
   - **Description**: Generate a shareable URL for a folder.
   - **Request Body**:
-    - `id`: (string) Folder ID.
     - `expiresIn`: (string) Expiration duration (`1d`, `7d`, `30d`).
+  - **Parameters**:
+    - `id`: (string) Folder ID.
   - **Responses**:
     - `201 Created`: Share URL generated successfully.
     - `400 Bad Request`: Invalid expiration value or missing ID.
@@ -166,4 +169,3 @@
   - **Responses**:
     - `200 OK`: Photo retrieved successfully.
     - `404 Not Found`: Photo not found or share URL expired.
-
