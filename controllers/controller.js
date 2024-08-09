@@ -116,7 +116,11 @@ exports.signin = [
 ];
 
 exports.home = [passport.authenticate('jwt', { session: false }), asyncHandler(async (req, res, next) => {
-    const photos = await File.find({ user: req.user._id }).populate("folder", "name").select("name createdAt imageUrl folder").limit(8);
+    const photos = await File.find({ user: req.user._id })
+        .sort({ createdAt: -1 })
+        .populate("folder", "name")
+        .select("name createdAt imageUrl folder")
+        .limit(8);
     return res.status(200).json({
         status: "success",
         photos,
