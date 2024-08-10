@@ -44,9 +44,9 @@ app.listen(3000, () => {
 });
 
 app.use((err, req, res, next) => {
-    res.status = process.env.NODE_ENV === "production" ? 500 : err.status;
+    res.status = err.status;
     return res.json({
         status: "error",
-        message: process.env.NODE_ENV === "production" ? "Internal server error" : err.message
+        message: process.env.NODE_ENV === "production" && err.status === 500 ? "Internal server error" : err.message
     });
 });
